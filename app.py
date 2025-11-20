@@ -15,7 +15,7 @@ IMAGE_FOLDER = "imagens"
 image_paths = []
 
 # Verifica se a pasta existe e lista os arquivos
-if os.path.exists(IMAGE_FOLDER) and os.isdir(IMAGE_FOLDER):
+if os.path.exists(IMAGE_FOLDER) and os.path.isdir(IMAGE_FOLDER):
     # Lista os arquivos, ordenados por nome para ter uma ordem consistente
     for filename in sorted(os.listdir(IMAGE_FOLDER)):
         # Filtra apenas por arquivos de imagem comuns
@@ -141,18 +141,27 @@ st.markdown(
         box-shadow: 0 0 20px rgba(216, 27, 96, 0.6); 
         margin-top: 40px;
         margin-bottom: 40px;
-        /* Remover o min-height: 400px também ajudará */
     }
     
-    /* MÁXIMA ESPECIFICIDADE PARA AJUSTAR A IMAGEM SEM CORTAR */
-    /* Removemos max-height para permitir que o carrossel estique, mas mantemos o object-fit: contain */
+    /* AJUSTE DEFINITIVO PARA O CORTE DE IMAGEM */
+    
+    /* 1. Alvo o contêiner do carrossel para forçar altura automática (mais agressivo) */
+    /* Isso tenta anular a altura fixa que o componente pode estar impondo */
+    .element-container [data-testid="stCustomComponent"] > div {
+        height: auto !important;
+        min-height: 1px !important; 
+    }
+
+    /* 2. Aplica as regras de ajuste de imagem (sem corte) */
     .element-container [data-testid="stCustomComponent"] img {
-        object-fit: contain !important; /* Essencial: Garante que a imagem inteira seja visível */
+        object-fit: contain !important; /* Essencial: Garante que a imagem inteira seja visível, adicionando barras se necessário */
         width: 100% !important; /* Garante que a imagem use a largura máxima do slide */
-        height: auto !important; /* Permite que a altura da imagem se ajuste naturalmente */
+        height: auto !important; /* Permite que a altura da imagem se ajuste naturalmente à largura */
+        max-width: 100% !important;
+        max-height: 100% !important;
     }
     
-    /* Seletor genérico mantido por segurança */
+    /* 3. Seletor genérico mantido por segurança */
     .stCarousel img {
         object-fit: contain !important; 
         width: 100% !important;
@@ -173,7 +182,7 @@ st.markdown("---")
 # --- EXIBIÇÃO DO CARROSSEL ---
 if carousel_items:
     try:
-        # CORREÇÃO: Argumento 'height' foi REMOVIDO para permitir que o carrossel se ajuste
+        # Mantemos SEM o argumento 'height' para permitir o ajuste automático
         carousel(items=carousel_items) 
         st.markdown("---") 
     except Exception as e:
