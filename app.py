@@ -3,7 +3,7 @@ from datetime import datetime
 import time
 import math
 import os
-from streamlit_carousel import carousel # Carrossel adicionado novamente
+from streamlit_carousel import carousel # Importação da biblioteca do carrossel
 
 # --- CONFIGURAÇÃO INICIAL (DATA E HORA DO NAMORO) ---
 # Namoro começou em 19/05/2024 às 21:30:00
@@ -14,12 +14,13 @@ DATE_OF_START = datetime(2024, 5, 19, 21, 30, 0)
 IMAGE_FOLDER = "imagens"
 image_paths = []
 
-# O Streamlit Cloud executa este código. Ele PRECISA encontrar a pasta 'imagens' no repositório.
+# Verifica se a pasta existe e lista os arquivos
 if os.path.exists(IMAGE_FOLDER) and os.path.isdir(IMAGE_FOLDER):
     # Lista os arquivos, ordenados por nome para ter uma ordem consistente
     for filename in sorted(os.listdir(IMAGE_FOLDER)):
+        # Filtra apenas por arquivos de imagem comuns
         if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp')):
-            # Adiciona o caminho completo da imagem (ex: imagens/foto1.jpg)
+            # Cria o caminho relativo que o Streamlit Cloud consegue ler
             image_paths.append(os.path.join(IMAGE_FOLDER, filename))
 else:
     # Aviso caso a pasta não seja encontrada
@@ -95,10 +96,9 @@ st.markdown(
     .metric-container {
         display: flex;
         justify-content: center;
-        flex-wrap: wrap; /* Permite que os boxes quebrem para a próxima linha em telas pequenas */
+        flex-wrap: wrap; 
         margin-top: 30px;
         gap: 20px;
-        /* Estilos para destacar o único contador */
         border: 3px solid #D81B60; /* Borda Vermelha */
         border-radius: 10px;
         padding: 20px;
@@ -108,7 +108,7 @@ st.markdown(
     
     /* Caixa de Cada Métrica */
     .metric-box {
-        background-color: #333333; /* Fundo da caixa cinza escuro */
+        background-color: #333333; 
         border-radius: 12px;
         padding: 15px 25px;
         min-width: 120px;
@@ -118,7 +118,7 @@ st.markdown(
         transition: transform 0.2s;
     }
     .metric-box:hover {
-        transform: scale(1.05); /* Efeito sutil ao passar o mouse */
+        transform: scale(1.05); 
         background-color: #444444;
     }
     .metric-value {
@@ -128,22 +128,23 @@ st.markdown(
     }
     .metric-label {
         font-size: 0.9em;
-        color: #aaaaaa; /* Cinza claro para os rótulos */
+        color: #aaaaaa; 
         margin-top: 5px;
         text-transform: uppercase;
         letter-spacing: 1px;
     }
     
     /* Estilos para o carrossel */
+    /* Adicionando um tamanho fixo mínimo para evitar que o layout "salte" */
     .stCarousel {
         border-radius: 15px;
         overflow: hidden;
-        box-shadow: 0 0 20px rgba(216, 27, 96, 0.6); /* Sombra vermelha forte para destaque */
+        box-shadow: 0 0 20px rgba(216, 27, 96, 0.6); 
         margin-top: 40px;
         margin-bottom: 40px;
+        min-height: 400px; /* Garante que o espaço do carrossel será reservado */
     }
     
-    /* Cor do texto de informação abaixo do contador */
     .stAlert p {
         color: #dddddd; 
     }
@@ -155,14 +156,85 @@ st.markdown(
 st.write(f"Início do Nosso Amor: **{DATE_OF_START.strftime('%d/%m/%Y às %H:%M:%S')}**")
 st.markdown("---")
 
-# --- CARROSSEL ---
-# O carrossel é colocado ANTES do loop while True para ser desenhado uma única vez.
+# --- EXIBIÇÃO DO CARROSSEL ---
 if carousel_items:
     try:
+        # AQUI FOI REMOVIDO O 'height' E 'width' para evitar o erro "unexpected keyword argument"
+        # Isso corrige o erro 'carousel() got an unexpected keyword argument 'height''
         carousel(items=carousel_items,
-                width=1, # Largura máxima do contêiner
                 autoplay=True,
                 loop=True) 
-        st.markdown("---") # Separador após o carrossel
+        st.markdown("---") 
     except Exception as e:
-        st.error(f"Erro ao exibir carrossel. Verifique seu requirements.txt para garantir que 'streamlit-carousel' esteja instalado e que TODAS as fotos estejam na pasta 'imagens'.
+        # ESTA LINHA FOI REVISADA para garantir que a f-string está completa.
+        st.error(f"Erro ao exibir carrossel. Por favor, verifique se a dependência 'streamlit-carousel' está listada no arquivo requirements.txt. O erro detalhado foi: {e}")
+        st.markdown("---") 
+else:
+    st.info("Adicione suas fotos na pasta 'imagens' do seu repositório para exibir o carrossel!")
+    st.markdown("---") 
+
+
+# Inicializa um container vazio que será atualizado a cada segundo
+placeholder = st.empty()
+
+# O loop 'while True' permite a atualização em tempo real do contador.
+while True:
+    years, months, days_only, h, m, s, total_seconds = calculate_duration(DATE_OF_START)
+
+    with placeholder.container():
+        
+        # Métrica detalhada em uma grade responsiva
+        st.markdown('<div class="metric-container">', unsafe_allow_html=True)
+
+        # Anos
+        st.markdown(f"""
+        <div class="metric-box">
+            <div class="metric-value">{years}</div>
+            <div class="metric-label">Anos</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Meses
+        st.markdown(f"""
+        <div class="metric-box">
+            <div class="metric-value">{months}</div>
+            <div class="metric-label">Meses</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Dias
+        st.markdown(f"""
+        <div class="metric-box">
+            <div class="metric-value">{days_only}</div>
+            <div class="metric-label">Dias Restantes</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Horas
+        st.markdown(f"""
+        <div class="metric-box">
+            <div class="metric-value">{h:02}</div>
+            <div class="metric-label">Horas</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Minutos
+        st.markdown(f"""
+        <div class="metric-box">
+            <div class="metric-value">{m:02}</div>
+            <div class="metric-label">Minutos</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Segundos
+        st.markdown(f"""
+        <div class="metric-box">
+            <div class="metric-value">{s:02}</div>
+            <div class="metric-label">Segundos</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Espera 1 segundo antes de recalcular e atualizar a tela
+    time.sleep(1)
