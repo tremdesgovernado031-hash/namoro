@@ -159,7 +159,7 @@ st.markdown("---")
 # --- EXIBIÇÃO DO CARROSSEL ---
 if carousel_items:
     try:
-        # Chamada corrigida, sem 'autoplay', 'loop' e usando 'img' nos itens
+        # Chamada corrigida, sem 'autoplay' e 'loop', e usando 'img' nos itens
         carousel(items=carousel_items) 
         st.markdown("---") 
     except Exception as e:
