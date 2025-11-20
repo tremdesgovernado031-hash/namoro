@@ -139,7 +139,7 @@ st.markdown(
     
     /* Estilos para o Carrossel (Solução para o Corte de Fotos Verticais) */
     
-    /* NOVO ALVO AGRESSIVO: Tenta anular altura em TODOS os contêineres Streamlit de alto nível */
+    /* CORREÇÃO AGRESSIVA 1: Tenta anular altura em TODOS os contêineres Streamlit de alto nível */
     .st-emotion-cache-1mnn6ge, .st-emotion-cache-9y61k, .st-emotion-cache-0, .st-emotion-cache-1wa5c1t, 
     .st-emotion-cache-1g6x5f, .st-emotion-cache-13k65ss, .st-emotion-cache-1v0xssw, .st-emotion-cache-uofu1m {
         height: auto !important;
@@ -147,11 +147,18 @@ st.markdown(
         min-height: auto !important;
         overflow: visible !important;
     }
+    
+    /* NOVO ALVO: Tenta anular a altura fixa no wrapper de componentes customizados */
+    .stCustomComponent {
+        height: auto !important;
+        max-height: none !important;
+        min-height: auto !important;
+    }
 
     /* Alvo 1: O contêiner de itens do carrossel (onde a altura fixa é aplicada) */
     .carousel-item-wrapper, .carousel-item-body {
         height: auto !important;
-        max-height: 90vh !important; /* Limite suave para telas grandes */
+        max-height: none !important; 
         min-height: auto !important;
         overflow: visible !important;
     }
@@ -170,8 +177,8 @@ st.markdown(
         /* ESSENCIAL: Altura determinada pela proporção original da imagem */
         height: auto !important; 
         
-        /* REMOVIDO o max-height para dar mais liberdade para fotos verticais */
-        /* max-height: 90vh !important; */ 
+        /* CRUCIAL: Limita a altura da imagem para caber na tela (80% da Altura do Viewport) */
+        max-height: 80vh !important; 
         
         width: 100% !important; 
         min-height: auto !important;
