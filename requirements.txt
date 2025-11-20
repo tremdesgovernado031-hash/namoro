@@ -1,4 +1,18 @@
-streamlit
-streamlit-carousel
-from streamlit_carousel import carousel
+carousel(items=carousel_items, height=400, width=1) 
 
+Eu havia removido o `height` na minha última sugestão, mas vamos garantir que o código que você está rodando atualmente esteja com a chamada correta, removendo o argumento `height` e o `width` (que você pode controlar via CSS no Streamlit de forma mais flexível).
+
+Vou gerar o arquivo `app.py` novamente, removendo o argumento `height` e o `width` da função `carousel()`, o que deve resolver esse erro.
+
+### `app.py` (Com ajuste na chamada da função `carousel`)
+
+
+http://googleusercontent.com/immersive_entry_chip/1
+
+### Resumo dos Próximos Passos:
+
+1.  **Atualize** o arquivo `requirements.txt` no seu repositório com o conteúdo da primeira caixa de arquivo (apenas duas linhas).
+2.  **Atualize** o arquivo `app.py` no seu repositório com o código da segunda caixa de arquivo (onde a chamada do `carousel` foi simplificada).
+3.  **Redeploy** o aplicativo no Streamlit Cloud.
+
+Essas duas correções devem resolver todos os erros que você está vendo!
