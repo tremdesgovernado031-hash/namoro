@@ -144,11 +144,19 @@ st.markdown(
         min-height: 400px; 
     }
     
-    /* NOVO: Garante que as imagens não sejam cortadas, mas sim ajustadas */
+    /* CORREÇÃO FINAL: Garante que as imagens não sejam cortadas, mas sim ajustadas */
     .stCarousel img {
-        object-fit: contain !important; 
-        height: 100% !important;
-        width: 100% !important;
+        object-fit: contain !important; /* Manteve a regra para ajustar a imagem */
+        max-height: 100% !important; /* NOVO: Usa max-height para não forçar o preenchimento */
+        max-width: 100% !important; /* NOVO: Usa max-width para não forçar o preenchimento */
+        /* Garante que o elemento 'parent' do carrossel que contém a imagem também seja tratado, se necessário */
+    }
+    
+    /* Tentar um seletor mais específico para o componente Streamlit (apenas em caso de override) */
+    .element-container [data-testid="stCustomComponent"] img {
+        object-fit: contain !important;
+        max-height: 100% !important;
+        max-width: 100% !important;
     }
     
     .stAlert p {
@@ -165,7 +173,7 @@ st.markdown("---")
 # --- EXIBIÇÃO DO CARROSSEL ---
 if carousel_items:
     try:
-        # AQUI FOI REINTRODUZIDO O ARGUMENTO 'height'
+        # Mantém a altura fixa para dar um contêiner definido para o CSS trabalhar
         carousel(items=carousel_items, height=400) 
         st.markdown("---") 
     except Exception as e:
