@@ -3,7 +3,8 @@ from datetime import datetime
 import time
 import math
 import os
-# from streamlit_carousel import carousel # REMOVIDO: Usaremos a galeria nativa do Streamlit para resolver o problema de corte
+# A biblioteca streamlit_carousel foi removida para usar o recurso nativo de imagem do Streamlit,
+# o que nos dá mais controle sobre o CSS para corrigir o corte.
 
 # --- CONFIGURAÇÃO INICIAL (DATA E HORA DO NAMORO) ---
 # Namoro começou em 19/05/2024 às 21:30:00
@@ -141,15 +142,17 @@ st.markdown(
     
     /* Estilos para a Galeria/Imagens */
     
-    /* 1. Resetar o contêiner interno do Streamlit */
-    /* Removemos o max-height para fotos retrato não serem cortadas */
+    /* Alvo 1: O contêiner de alto nível do Streamlit (classe gerada dinamicamente) */
+    /* Isso tenta reverter qualquer altura fixa imposta pelo Streamlit. */
     div.stImage {
         height: auto !important;
         max-height: none !important;
+        min-height: auto !important;
+        overflow: visible !important;
     }
 
-    /* 2. Aplicar as regras na tag da imagem */
-    .stImage > img {
+    /* Alvo 2: A tag img dentro do contêiner */
+    .stImage img {
         border-radius: 15px;
         box-shadow: 0 0 20px rgba(216, 27, 96, 0.6); 
         
@@ -157,10 +160,17 @@ st.markdown(
         object-fit: contain !important; /* ESSENCIAL: Garante que a imagem inteira seja visível (sem crop) */
         width: 100% !important; /* Usa a largura total da coluna */
         height: auto !important; /* A altura se ajusta à proporção da imagem (sem altura fixa) */
-        max-height: none !important; /* Garante que a imagem possa ser exibida por completo */
-        
-        min-height: 1px !important;
+        max-height: none !important; /* Remove qualquer limite de altura */
+        min-height: auto !important;
     }
+
+    /* Alvo 3: O contêiner pai que envolve o stImage, usando um seletor mais amplo */
+    /* Esta é a tentativa mais agressiva de remover restrições de altura nos pais. */
+    .st-emotion-cache-1mnn6ge, .st-emotion-cache-9y61k, .st-emotion-cache-0 { /* Classes de cache Streamlit que podem impor altura */
+        height: auto !important;
+        max-height: none !important;
+    }
+
 
     /* Estilos para os botões do carrossel */
     .stButton > button {
@@ -200,7 +210,6 @@ if image_paths:
     st.image(
         current_path, 
         caption=f"Foto {image_number} de {total_images}",
-        # use_column_width=True FOI REMOVIDO para confiar no CSS
     )
     
     # Controles (Botões)
