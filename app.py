@@ -29,9 +29,9 @@ else:
 carousel_items = []
 if image_paths:
     for i, path in enumerate(image_paths):
-        # Usando apenas o caminho e o título, removendo o 'interval'
+        # CORREÇÃO: Usando a chave 'img' em vez de 'image' para compatibilidade com a versão da biblioteca no Cloud
         carousel_items.append({
-            "image": path,
+            "img": path, # CHAVE CORRIGIDA
             "title": f"Nossa Memória {i+1}",
             "text": f"Momento especial {i+1} de Pedro e Hellen",
         })
@@ -159,7 +159,7 @@ st.markdown("---")
 # --- EXIBIÇÃO DO CARROSSEL ---
 if carousel_items:
     try:
-        # AQUI FOI REMOVIDO 'autoplay' e 'loop' para evitar o erro "unexpected keyword argument"
+        # Chamada corrigida, sem 'autoplay', 'loop' e usando 'img' nos itens
         carousel(items=carousel_items) 
         st.markdown("---") 
     except Exception as e:
