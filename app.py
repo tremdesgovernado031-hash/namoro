@@ -30,7 +30,7 @@ else:
 carousel_items = []
 if image_paths:
     for path in image_paths:
-        # Adiciona item com URL da imagem e um título básico
+        # Adiciona item com URL da imagem e um título básico (pode ser personalizado)
         carousel_items.append({
             "title": "Nós",
             "text": "Nossa história em fotos",
@@ -178,6 +178,17 @@ st.markdown(
     .st-emotion-cache-1mnn6ge, .st-emotion-cache-9y61k {
         overflow-x: hidden !important; 
     }
+    
+    /* Estilo para a Mensagem Final */
+    .final-message {
+        text-align: center;
+        font-style: italic;
+        color: #FF4444; /* Vermelho vibrante */
+        font-size: 1.2em;
+        margin-top: 40px;
+        padding: 15px;
+        border-top: 1px solid #333333;
+    }
 
     </style>
     """,
@@ -189,10 +200,11 @@ st.markdown("---")
 
 # --- EXIBIÇÃO DA GALERIA (CARROSSEL AUTOMÁTICO) ---
 if carousel_items:
-    st.header("✨ Nossas Melhores Memórias ✨")
-    
-    # Exibe o carrossel automático
+    # 1. Exibe o carrossel automático
     carousel(items=carousel_items, width=1.0)
+    
+    # 2. MOVE O TÍTULO PARA DEPOIS DO CARROSSEL
+    st.header("✨ Nossas Melhores Memórias ✨")
     
     st.markdown("---")
 else:
@@ -261,6 +273,18 @@ while True:
         """, unsafe_allow_html=True)
 
         st.markdown('</div>', unsafe_allow_html=True)
+        
+        # --- MENSAGEM FINAL ADICIONADA AQUI ---
+        st.markdown(
+            """
+            <div class="final-message">
+                Oi, meu amor! 
+                Fiz esse site pra você lembrar que você é a melhor coisa que já aconteceu na minha vida e pra nunca esquecer que eu sempre vou estar do seu lado, nos momentos bons e nos ruins. Te amo pra todo o sempre! 🫶🏻
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        # -------------------------------------
 
     # Espera 1 segundo antes de recalcular e atualizar a tela
     time.sleep(1)
