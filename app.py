@@ -15,7 +15,7 @@ IMAGE_FOLDER = "imagens"
 image_paths = []
 
 # Verifica se a pasta existe e lista os arquivos
-if os.path.exists(IMAGE_FOLDER) and os.path.isdir(IMAGE_FOLDER):
+if os.path.exists(IMAGE_FOLDER) and os.isdir(IMAGE_FOLDER):
     # Lista os arquivos, ordenados por nome para ter uma ordem consistente
     for filename in sorted(os.listdir(IMAGE_FOLDER)):
         # Filtra apenas por arquivos de imagem comuns
@@ -141,22 +141,22 @@ st.markdown(
         box-shadow: 0 0 20px rgba(216, 27, 96, 0.6); 
         margin-top: 40px;
         margin-bottom: 40px;
-        min-height: 400px; 
+        /* Remover o min-height: 400px também ajudará */
     }
     
-    /* CORREÇÃO FINAL: Garante que as imagens não sejam cortadas, mas sim ajustadas */
-    .stCarousel img {
-        object-fit: contain !important; /* Manteve a regra para ajustar a imagem */
-        max-height: 100% !important; /* NOVO: Usa max-height para não forçar o preenchimento */
-        max-width: 100% !important; /* NOVO: Usa max-width para não forçar o preenchimento */
-        /* Garante que o elemento 'parent' do carrossel que contém a imagem também seja tratado, se necessário */
-    }
-    
-    /* Tentar um seletor mais específico para o componente Streamlit (apenas em caso de override) */
+    /* MÁXIMA ESPECIFICIDADE PARA AJUSTAR A IMAGEM SEM CORTAR */
+    /* Removemos max-height para permitir que o carrossel estique, mas mantemos o object-fit: contain */
     .element-container [data-testid="stCustomComponent"] img {
-        object-fit: contain !important;
-        max-height: 100% !important;
-        max-width: 100% !important;
+        object-fit: contain !important; /* Essencial: Garante que a imagem inteira seja visível */
+        width: 100% !important; /* Garante que a imagem use a largura máxima do slide */
+        height: auto !important; /* Permite que a altura da imagem se ajuste naturalmente */
+    }
+    
+    /* Seletor genérico mantido por segurança */
+    .stCarousel img {
+        object-fit: contain !important; 
+        width: 100% !important;
+        height: auto !important;
     }
     
     .stAlert p {
@@ -173,8 +173,8 @@ st.markdown("---")
 # --- EXIBIÇÃO DO CARROSSEL ---
 if carousel_items:
     try:
-        # Mantém a altura fixa para dar um contêiner definido para o CSS trabalhar
-        carousel(items=carousel_items, height=400) 
+        # CORREÇÃO: Argumento 'height' foi REMOVIDO para permitir que o carrossel se ajuste
+        carousel(items=carousel_items) 
         st.markdown("---") 
     except Exception as e:
         # Mensagem de erro padrão.
