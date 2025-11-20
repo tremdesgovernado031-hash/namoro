@@ -3,7 +3,7 @@ from datetime import datetime
 import time
 import math
 import os
-from streamlit_carousel import carousel # Importação da biblioteca do carrossel
+# from streamlit_carousel import carousel # REMOVIDO: Usaremos a galeria nativa do Streamlit para resolver o problema de corte
 
 # --- CONFIGURAÇÃO INICIAL (DATA E HORA DO NAMORO) ---
 # Namoro começou em 19/05/2024 às 21:30:00
@@ -26,15 +26,20 @@ else:
     # Aviso caso a pasta não seja encontrada
     st.warning(f"A pasta '{IMAGE_FOLDER}' não foi encontrada. O carrossel não será exibido. Certifique-se de que ela está no seu repositório GitHub.")
 
-carousel_items = []
-if image_paths:
-    for i, path in enumerate(image_paths):
-        # Usando a chave 'img' para compatibilidade com a versão da biblioteca no Cloud
-        carousel_items.append({
-            "img": path, 
-            "title": f"Nossa Memória {i+1}",
-            "text": f"Momento especial {i+1} de Pedro e Hellen",
-        })
+# Inicializa o índice de imagem na sessão (usado para o carrossel manual)
+if 'current_index' not in st.session_state:
+    st.session_state.current_index = 0
+
+def next_image():
+    """Avança para a próxima imagem."""
+    if image_paths:
+        st.session_state.current_index = (st.session_state.current_index + 1) % len(image_paths)
+
+def prev_image():
+    """Volta para a imagem anterior."""
+    if image_paths:
+        st.session_state.current_index = (st.session_state.current_index - 1) % len(image_paths)
+
 # ------------------------------------------------------------------------------
 
 def calculate_duration(start_date):
@@ -134,38 +139,28 @@ st.markdown(
         letter-spacing: 1px;
     }
     
-    /* Estilos para o carrossel */
-    .stCarousel {
+    /* Estilos para o Carrossel Manual Nativo */
+    .stImage > img {
         border-radius: 15px;
-        overflow: hidden;
         box-shadow: 0 0 20px rgba(216, 27, 96, 0.6); 
-        margin-top: 40px;
-        margin-bottom: 40px;
-    }
-    
-    /* AJUSTE DEFINITIVO PARA O CORTE DE IMAGEM */
-    
-    /* 1. Alvo o contêiner do carrossel para forçar altura automática (mais agressivo) */
-    /* Isso tenta anular a altura fixa que o componente pode estar impondo */
-    .element-container [data-testid="stCustomComponent"] > div {
-        height: auto !important;
-        min-height: 1px !important; 
+        object-fit: contain !important; /* Garante que a imagem inteira seja visível */
+        width: 100%;
+        height: auto; /* Permite que a imagem se ajuste */
     }
 
-    /* 2. Aplica as regras de ajuste de imagem (sem corte) */
-    .element-container [data-testid="stCustomComponent"] img {
-        object-fit: contain !important; /* Essencial: Garante que a imagem inteira seja visível, adicionando barras se necessário */
-        width: 100% !important; /* Garante que a imagem use a largura máxima do slide */
-        height: auto !important; /* Permite que a altura da imagem se ajuste naturalmente à largura */
-        max-width: 100% !important;
-        max-height: 100% !important;
+    /* Estilos para os botões do carrossel */
+    .stButton > button {
+        width: 100%;
+        border-radius: 8px;
+        background-color: #D81B60; /* Vermelho */
+        color: white;
+        font-weight: bold;
+        border: none;
+        padding: 10px;
+        transition: background-color 0.2s;
     }
-    
-    /* 3. Seletor genérico mantido por segurança */
-    .stCarousel img {
-        object-fit: contain !important; 
-        width: 100% !important;
-        height: auto !important;
+    .stButton > button:hover {
+        background-color: #FF4444; /* Vermelho mais claro no hover */
     }
     
     .stAlert p {
@@ -179,18 +174,31 @@ st.markdown(
 st.write(f"Início do Nosso Amor: **{DATE_OF_START.strftime('%d/%m/%Y às %H:%M:%S')}**")
 st.markdown("---")
 
-# --- EXIBIÇÃO DO CARROSSEL ---
-if carousel_items:
-    try:
-        # Mantemos SEM o argumento 'height' para permitir o ajuste automático
-        carousel(items=carousel_items) 
-        st.markdown("---") 
-    except Exception as e:
-        # Mensagem de erro padrão.
-        st.error(f"Erro ao exibir carrossel. Por favor, verifique se a dependência 'streamlit-carousel' está instalada e os argumentos estão corretos. O erro detalhado foi: {e}")
-        st.markdown("---") 
+# --- EXIBIÇÃO DA GALERIA (CARROSSEL MANUAL NATIVO) ---
+if image_paths:
+    st.header("✨ Nossas Melhores Memórias ✨")
+    
+    # Exibir a imagem atual
+    current_path = image_paths[st.session_state.current_index]
+    image_number = st.session_state.current_index + 1
+    total_images = len(image_paths)
+    
+    st.image(
+        current_path, 
+        caption=f"Foto {image_number} de {total_images}",
+        use_column_width=True # Garante que a imagem se ajuste à largura da coluna central
+    )
+    
+    # Controles (Botões)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.button("❮ Anterior", on_click=prev_image, key="prev_btn")
+    with col2:
+        st.button("Próxima ❯", on_click=next_image, key="next_btn")
+        
+    st.markdown("---")
 else:
-    st.info("Adicione suas fotos na pasta 'imagens' do seu repositório para exibir o carrossel!")
+    st.info("Adicione suas fotos na pasta 'imagens' do seu repositório para exibir a galeria!")
     st.markdown("---") 
 
 
