@@ -1,3 +1,4 @@
 streamlit
 streamlit-carousel
+from streamlit_carousel import carousel
 
