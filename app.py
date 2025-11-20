@@ -16,7 +16,7 @@ IMAGE_FOLDER = "imagens"
 image_paths = []
 
 # Verifica se a pasta existe e lista os arquivos
-if os.path.exists(IMAGE_FOLDER) and os.isdir(IMAGE_FOLDER):
+if os.path.exists(IMAGE_FOLDER) and osisdir(IMAGE_FOLDER):
     # Lista os arquivos, ordenados por nome para ter uma ordem consistente
     for filename in sorted(os.listdir(IMAGE_FOLDER)):
         # Filtra apenas por arquivos de imagem comuns
