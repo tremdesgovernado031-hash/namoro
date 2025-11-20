@@ -3,8 +3,8 @@ from datetime import datetime
 import time
 import math
 import os
-# A biblioteca streamlit_carousel foi removida para usar o recurso nativo de imagem do Streamlit,
-# o que nos dá mais controle sobre o CSS para corrigir o corte.
+# Reintrodução do carrossel para melhor gestão da galeria e aplicação de CSS
+from streamlit_carousel import carousel 
 
 # --- CONFIGURAÇÃO INICIAL (DATA E HORA DO NAMORO) ---
 # Namoro começou em 19/05/2024 às 21:30:00
@@ -24,23 +24,18 @@ if os.path.exists(IMAGE_FOLDER) and os.path.isdir(IMAGE_FOLDER):
             # Cria o caminho relativo que o Streamlit Cloud consegue ler
             image_paths.append(os.path.join(IMAGE_FOLDER, filename))
 else:
-    # Aviso caso a pasta não seja encontrada
-    st.warning(f"A pasta '{IMAGE_FOLDER}' não foi encontrada. O carrossel não será exibido. Certifique-se de que ela está no seu repositório GitHub.")
+    st.warning(f"A pasta '{IMAGE_FOLDER}' não foi encontrada. O carrossel não será exibido.")
 
-# Inicializa o índice de imagem na sessão (usado para o carrossel manual)
-if 'current_index' not in st.session_state:
-    st.session_state.current_index = 0
-
-def next_image():
-    """Avança para a próxima imagem."""
-    if image_paths:
-        st.session_state.current_index = (st.session_state.current_index + 1) % len(image_paths)
-
-def prev_image():
-    """Volta para a imagem anterior."""
-    if image_paths:
-        st.session_state.current_index = (st.session_state.current_index - 1) % len(image_paths)
-
+# Preparar os itens do carrossel (formato exigido pela biblioteca)
+carousel_items = []
+if image_paths:
+    for path in image_paths:
+        # Adiciona item com URL da imagem e um título básico
+        carousel_items.append({
+            "title": "Nós",
+            "text": "Nossa história em fotos",
+            "img": path
+        })
 # ------------------------------------------------------------------------------
 
 def calculate_duration(start_date):
@@ -98,7 +93,7 @@ st.markdown(
         color: #ffffff;
     }
     
-    /* Contêiner de Métricas (Responsável por colocar os boxes lado a lado e com destaque) */
+    /* Contêiner de Métricas */
     .metric-container {
         display: flex;
         justify-content: center;
@@ -140,56 +135,40 @@ st.markdown(
         letter-spacing: 1px;
     }
     
-    /* Estilos para a Galeria/Imagens */
+    /* Estilos para o Carrossel (Solução para o Corte de Fotos Verticais) */
     
-    /* Alvo 1: O contêiner de alto nível do Streamlit (classe gerada dinamicamente) */
-    /* Isso tenta reverter qualquer altura fixa imposta pelo Streamlit. */
-    div.stImage {
+    /* Alvo 1: O contêiner de itens do carrossel (onde a altura fixa é aplicada) */
+    .carousel-item-wrapper, .carousel-item-body {
         height: auto !important;
-        max-height: none !important;
+        max-height: 90vh !important; /* Limite suave para telas grandes */
         min-height: auto !important;
         overflow: visible !important;
     }
 
-    /* Alvo 2: A tag img dentro do contêiner */
-    .stImage img {
+    /* Alvo 2: A tag img dentro do carrossel (Regras Cruciais) */
+    .carousel-item-body img {
         border-radius: 15px;
         box-shadow: 0 0 20px rgba(216, 27, 96, 0.6); 
         
-        /* Regras Definitivas Contra Corte */
-        object-fit: contain !important; /* ESSENCIAL: Garante que a imagem inteira seja visível (sem crop) */
-        width: 100% !important; /* Usa a largura total da coluna */
-        height: auto !important; /* A altura se ajusta à proporção da imagem (sem altura fixa) */
-        max-height: none !important; /* Remove qualquer limite de altura */
+        /* ESSENCIAL: Garante que a imagem inteira seja visível (sem crop) */
+        object-fit: contain !important; 
+        
+        /* ESSENCIAL: Altura determinada pela proporção original da imagem */
+        height: auto !important; 
+        
+        /* ESSENCIAL: Remove qualquer limite de altura imposto */
+        max-height: 90vh !important; 
+        
+        width: 100% !important; 
         min-height: auto !important;
-    }
-
-    /* Alvo 3: O contêiner pai que envolve o stImage, usando um seletor mais amplo */
-    /* Esta é a tentativa mais agressiva de remover restrições de altura nos pais. */
-    .st-emotion-cache-1mnn6ge, .st-emotion-cache-9y61k, .st-emotion-cache-0 { /* Classes de cache Streamlit que podem impor altura */
-        height: auto !important;
-        max-height: none !important;
-    }
-
-
-    /* Estilos para os botões do carrossel */
-    .stButton > button {
-        width: 100%;
-        border-radius: 8px;
-        background-color: #D81B60; /* Vermelho */
-        color: white;
-        font-weight: bold;
-        border: none;
-        padding: 10px;
-        transition: background-color 0.2s;
-    }
-    .stButton > button:hover {
-        background-color: #FF4444; /* Vermelho mais claro no hover */
+        aspect-ratio: auto !important; /* Usa a proporção da imagem */
     }
     
-    .stAlert p {
-        color: #dddddd; 
+    /* Esconde a barra de rolagem horizontal que pode aparecer com o carrossel */
+    .st-emotion-cache-1mnn6ge, .st-emotion-cache-9y61k {
+        overflow-x: hidden !important; 
     }
+
     </style>
     """,
     unsafe_allow_html=True
@@ -198,27 +177,13 @@ st.markdown(
 st.write(f"Início do Nosso Amor: **{DATE_OF_START.strftime('%d/%m/%Y às %H:%M:%S')}**")
 st.markdown("---")
 
-# --- EXIBIÇÃO DA GALERIA (CARROSSEL MANUAL NATIVO) ---
-if image_paths:
+# --- EXIBIÇÃO DA GALERIA (CARROSSEL AUTOMÁTICO) ---
+if carousel_items:
     st.header("✨ Nossas Melhores Memórias ✨")
     
-    # Exibir a imagem atual
-    current_path = image_paths[st.session_state.current_index]
-    image_number = st.session_state.current_index + 1
-    total_images = len(image_paths)
+    # Exibe o carrossel automático
+    carousel(items=carousel_items, width=1.0)
     
-    st.image(
-        current_path, 
-        caption=f"Foto {image_number} de {total_images}",
-    )
-    
-    # Controles (Botões)
-    col1, col2 = st.columns(2)
-    with col1:
-        st.button("❮ Anterior", on_click=prev_image, key="prev_btn")
-    with col2:
-        st.button("Próxima ❯", on_click=next_image, key="next_btn")
-        
     st.markdown("---")
 else:
     st.info("Adicione suas fotos na pasta 'imagens' do seu repositório para exibir a galeria!")
