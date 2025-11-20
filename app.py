@@ -29,9 +29,9 @@ else:
 carousel_items = []
 if image_paths:
     for i, path in enumerate(image_paths):
-        # CORREÇÃO: Usando a chave 'img' em vez de 'image' para compatibilidade com a versão da biblioteca no Cloud
+        # Usando a chave 'img' para compatibilidade com a versão da biblioteca no Cloud
         carousel_items.append({
-            "img": path, # CHAVE CORRIGIDA
+            "img": path, 
             "title": f"Nossa Memória {i+1}",
             "text": f"Momento especial {i+1} de Pedro e Hellen",
         })
@@ -135,14 +135,20 @@ st.markdown(
     }
     
     /* Estilos para o carrossel */
-    /* Adicionando um tamanho fixo mínimo para evitar que o layout "salte" */
     .stCarousel {
         border-radius: 15px;
         overflow: hidden;
         box-shadow: 0 0 20px rgba(216, 27, 96, 0.6); 
         margin-top: 40px;
         margin-bottom: 40px;
-        min-height: 400px; /* Garante que o espaço do carrossel será reservado */
+        min-height: 400px; 
+    }
+    
+    /* NOVO: Garante que as imagens não sejam cortadas, mas sim ajustadas */
+    .stCarousel img {
+        object-fit: contain !important; 
+        height: 100% !important;
+        width: 100% !important;
     }
     
     .stAlert p {
@@ -159,12 +165,12 @@ st.markdown("---")
 # --- EXIBIÇÃO DO CARROSSEL ---
 if carousel_items:
     try:
-        # Chamada corrigida, sem 'autoplay' e 'loop', e usando 'img' nos itens
-        carousel(items=carousel_items) 
+        # AQUI FOI REINTRODUZIDO O ARGUMENTO 'height'
+        carousel(items=carousel_items, height=400) 
         st.markdown("---") 
     except Exception as e:
         # Mensagem de erro padrão.
-        st.error(f"Erro ao exibir carrossel. Por favor, verifique se a dependência 'streamlit-carousel' está instalada. O erro detalhado foi: {e}")
+        st.error(f"Erro ao exibir carrossel. Por favor, verifique se a dependência 'streamlit-carousel' está instalada e os argumentos estão corretos. O erro detalhado foi: {e}")
         st.markdown("---") 
 else:
     st.info("Adicione suas fotos na pasta 'imagens' do seu repositório para exibir o carrossel!")
