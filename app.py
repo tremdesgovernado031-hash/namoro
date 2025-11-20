@@ -2,7 +2,7 @@ import streamlit as st
 from datetime import datetime
 import time
 import math
-import os
+import os # ESSENCIAL: Garante que 'os.path' funcione para encontrar as imagens
 # Reintrodução do carrossel para melhor gestão da galeria e aplicação de CSS
 from streamlit_carousel import carousel 
 
@@ -16,7 +16,8 @@ IMAGE_FOLDER = "imagens"
 image_paths = []
 
 # Verifica se a pasta existe e lista os arquivos
-if os.path.exists(IMAGE_FOLDER) and osisdir(IMAGE_FOLDER):
+# Nota: A inclusão do 'import os' acima é crucial para que esta seção não cause um NameError
+if os.path.exists(IMAGE_FOLDER) and os.path.isdir(IMAGE_FOLDER):
     # Lista os arquivos, ordenados por nome para ter uma ordem consistente
     for filename in sorted(os.listdir(IMAGE_FOLDER)):
         # Filtra apenas por arquivos de imagem comuns
@@ -24,13 +25,14 @@ if os.path.exists(IMAGE_FOLDER) and osisdir(IMAGE_FOLDER):
             # Cria o caminho relativo que o Streamlit Cloud consegue ler
             image_paths.append(os.path.join(IMAGE_FOLDER, filename))
 else:
+    # Esta mensagem só aparecerá se a pasta 'imagens' não for encontrada
     st.warning(f"A pasta '{IMAGE_FOLDER}' não foi encontrada. O carrossel não será exibido.")
 
 # Preparar os itens do carrossel (formato exigido pela biblioteca)
 carousel_items = []
 if image_paths:
     for path in image_paths:
-        # Adiciona item com URL da imagem e um título básico (pode ser personalizado)
+        # Adiciona item com URL da imagem e um título básico
         carousel_items.append({
             "title": "Nós",
             "text": "Nossa história em fotos",
@@ -138,7 +140,6 @@ st.markdown(
     /* Estilos para o Carrossel (Solução para o Corte de Fotos Verticais) */
     
     /* NOVO ALVO AGRESSIVO: Tenta anular altura em TODOS os contêineres Streamlit de alto nível */
-    /* que envolvem componentes (incluindo o carrossel), forçando a altura a ser automática. */
     .st-emotion-cache-1mnn6ge, .st-emotion-cache-9y61k, .st-emotion-cache-0, .st-emotion-cache-1wa5c1t, 
     .st-emotion-cache-1g6x5f, .st-emotion-cache-13k65ss, .st-emotion-cache-1v0xssw, .st-emotion-cache-uofu1m {
         height: auto !important;
@@ -274,7 +275,7 @@ while True:
 
         st.markdown('</div>', unsafe_allow_html=True)
         
-        # --- MENSAGEM FINAL ADICIONADA AQUI ---
+        # --- MENSAGEM FINAL (O texto pedido) ---
         st.markdown(
             """
             <div class="final-message">
