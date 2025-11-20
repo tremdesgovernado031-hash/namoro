@@ -280,7 +280,7 @@ while True:
             """
             <div class="final-message">
                 Oi, meu amor! 
-                Fiz esse site pra você lembrar que você é a melhor coisa que já aconteceu na minha vida e para nunca esquecer que eu sempre vou estar do seu lado, nos momentos bons e nos ruins. Te amo pra todo o sempre!🏻
+                Fiz esse site pra você lembrar que você é a melhor coisa que já aconteceu na minha vida e para nunca esquecer que eu sempre vou estar do seu lado, nos momentos bons e nos ruins. Te amo pra todo o sempre!❤️
             </div>
             """,
             unsafe_allow_html=True
@@ -289,6 +289,7 @@ while True:
 
     # Espera 1 segundo antes de recalcular e atualizar a tela
     time.sleep(1)
+
 
 
 
