@@ -29,11 +29,11 @@ else:
 carousel_items = []
 if image_paths:
     for i, path in enumerate(image_paths):
+        # Usando apenas o caminho e o título, removendo o 'interval'
         carousel_items.append({
             "image": path,
             "title": f"Nossa Memória {i+1}",
             "text": f"Momento especial {i+1} de Pedro e Hellen",
-            "interval": 3000 # 3 segundos para cada slide
         })
 # ------------------------------------------------------------------------------
 
@@ -159,15 +159,12 @@ st.markdown("---")
 # --- EXIBIÇÃO DO CARROSSEL ---
 if carousel_items:
     try:
-        # AQUI FOI REMOVIDO O 'height' E 'width' para evitar o erro "unexpected keyword argument"
-        # Isso corrige o erro 'carousel() got an unexpected keyword argument 'height''
-        carousel(items=carousel_items,
-                autoplay=True,
-                loop=True) 
+        # AQUI FOI REMOVIDO 'autoplay' e 'loop' para evitar o erro "unexpected keyword argument"
+        carousel(items=carousel_items) 
         st.markdown("---") 
     except Exception as e:
-        # ESTA LINHA FOI REVISADA para garantir que a f-string está completa.
-        st.error(f"Erro ao exibir carrossel. Por favor, verifique se a dependência 'streamlit-carousel' está listada no arquivo requirements.txt. O erro detalhado foi: {e}")
+        # Mensagem de erro padrão.
+        st.error(f"Erro ao exibir carrossel. Por favor, verifique se a dependência 'streamlit-carousel' está instalada. O erro detalhado foi: {e}")
         st.markdown("---") 
 else:
     st.info("Adicione suas fotos na pasta 'imagens' do seu repositório para exibir o carrossel!")
