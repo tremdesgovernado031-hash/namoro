@@ -15,7 +15,7 @@ IMAGE_FOLDER = "imagens"
 image_paths = []
 
 # Verifica se a pasta existe e lista os arquivos
-if os.path.exists(IMAGE_FOLDER) and os.isdir(IMAGE_FOLDER):
+if os.path.exists(IMAGE_FOLDER) and os.path.isdir(IMAGE_FOLDER):
     # Lista os arquivos, ordenados por nome para ter uma ordem consistente
     for filename in sorted(os.listdir(IMAGE_FOLDER)):
         # Filtra apenas por arquivos de imagem comuns
@@ -140,17 +140,25 @@ st.markdown(
     }
     
     /* Estilos para a Galeria/Imagens */
+    
+    /* 1. Resetar o contêiner interno do Streamlit */
+    /* Removemos o max-height para fotos retrato não serem cortadas */
+    div.stImage {
+        height: auto !important;
+        max-height: none !important;
+    }
+
+    /* 2. Aplicar as regras na tag da imagem */
     .stImage > img {
         border-radius: 15px;
         box-shadow: 0 0 20px rgba(216, 27, 96, 0.6); 
         
         /* Regras Definitivas Contra Corte */
-        object-fit: contain !important; /* Essencial: Garante que a imagem inteira seja visível (sem crop) */
+        object-fit: contain !important; /* ESSENCIAL: Garante que a imagem inteira seja visível (sem crop) */
         width: 100% !important; /* Usa a largura total da coluna */
-        height: auto !important; /* A altura se ajusta à proporção da imagem */
-        max-height: 80vh !important; /* Limita a altura máxima para imagens muito longas (retratos) */
+        height: auto !important; /* A altura se ajusta à proporção da imagem (sem altura fixa) */
+        max-height: none !important; /* Garante que a imagem possa ser exibida por completo */
         
-        /* Previne que o Streamlit force uma altura fixa */
         min-height: 1px !important;
     }
 
