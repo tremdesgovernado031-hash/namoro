@@ -32,10 +32,10 @@ else:
 carousel_items = []
 if image_paths:
     for path in image_paths:
-        # Adiciona item com URL da imagem e um título básico
+        # ATUALIZAÇÃO: Títulos e textos vazios para não aparecerem sobre as fotos
         carousel_items.append({
-            "title": "Nós",
-            "text": "Nossa história em fotos",
+            "title": "", # Removido o texto "Nós"
+            "text": "",  # Removido o texto "Nossa história em fotos"
             "img": path
         })
 # ------------------------------------------------------------------------------
@@ -164,11 +164,14 @@ st.markdown(
         /* ESSENCIAL: Garante que a imagem inteira seja visível (sem crop) */
         object-fit: contain !important; 
         
+        /* NOVO/REFORÇADO: Garante que a imagem se comporte como um bloco para cálculo de altura */
+        display: block !important; 
+        
         /* ESSENCIAL: Altura determinada pela proporção original da imagem */
         height: auto !important; 
         
-        /* ESSENCIAL: Remove qualquer limite de altura imposto */
-        max-height: 90vh !important; 
+        /* REMOVIDO o max-height para dar mais liberdade para fotos verticais */
+        /* max-height: 90vh !important; */ 
         
         width: 100% !important; 
         min-height: auto !important;
@@ -275,12 +278,12 @@ while True:
 
         st.markdown('</div>', unsafe_allow_html=True)
         
-        # --- MENSAGEM FINAL (O texto pedido) ---
+        # --- MENSAGEM FINAL (O texto pedido com corações) ---
         st.markdown(
             """
             <div class="final-message">
                 Oi, meu amor! 
-                Fiz esse site pra você lembrar que você é a melhor coisa que já aconteceu na minha vida e para nunca esquecer que eu sempre vou estar do seu lado, nos momentos bons e nos ruins. Te amo pra todo o sempre!❤️
+                Fiz esse site pra você lembrar que você é a melhor coisa que já aconteceu na minha vida e pra nunca esquecer que eu sempre vou estar do seu lado, nos momentos bons e nos ruins. Te amo pra todo o sempre! ❤️🫶🏻
             </div>
             """,
             unsafe_allow_html=True
@@ -289,7 +292,3 @@ while True:
 
     # Espera 1 segundo antes de recalcular e atualizar a tela
     time.sleep(1)
-
-
-
-
